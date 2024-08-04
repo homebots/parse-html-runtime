@@ -1,18 +1,16 @@
-import type { CommentNode, DocumentNode, ElementNode, TextNode } from "@homebots/parse-html";
+import type { DocumentNode, ElementNode, ParserNode } from "@homebots/parse-html";
 
-export function normalize(node: ElementNode | DocumentNode | CommentNode | TextNode) {
-  if ('children' in node === false) {
-    return node;
+export function normalize<T extends ParserNode>(node: T) {
+  if ('children' in node) {
+    node.children = node.children.filter((child) => {
+      if (child.type === "text" && child.text.trim() === "") {
+        return false;
+      }
+
+      normalize(child as ElementNode | DocumentNode);
+      return true;
+    });
   }
-
-  node.children = node.children.filter((child) => {
-    if (child.type === "text" && child.text.trim() === "") {
-      return false;
-    }
-
-    normalize(child);
-    return true;
-  });
 
   return node;
 }
