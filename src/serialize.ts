@@ -1,4 +1,4 @@
-import type { ParserNode } from './types';
+import type { ParserNode } from "@homebots/parse-html";
 
 export function serialize(node: ParserNode) {
   switch (node.type) {
