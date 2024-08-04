@@ -47,6 +47,8 @@ export function createTextNode(node: TextNode) {
 export function createElement(node: ElementNode) {
   const el = document.createElement(node.tag);
   el['@attributes'] = node.attributes;
+  el['@node'] = node;
+
   node.attributes.forEach((a: ParserAttribute) => setAttribute(el, a.name, a.value));
 
   return el;
