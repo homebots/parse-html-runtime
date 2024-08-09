@@ -1,11 +1,10 @@
 import type { ParserNode, ParserAttribute, CommentNode, TextNode, ElementNode } from '@homebots/parse-html';
 
-const validAttribute = /^[a-z][a-z0-9-]+$/;
-const noop = () => {};
+const validAttribute = /^[a-zA-Z_][a-zA-Z0-9\-_:.]*$/;
 
 export type Visitor = <T>(el: T, node: ParserNode) => T | null | undefined | void;
 
-export function materialize(node: ParserNode, visitor: Visitor = noop) {
+export function materialize(node: ParserNode, visitor: Visitor|null = null) {
   let el: any;
 
   switch (node.type) {
@@ -33,7 +32,7 @@ export function materialize(node: ParserNode, visitor: Visitor = noop) {
       throw new Error(`Invalid node type: ${(node as any).type}`);
   }
 
-  return visitor(el, node) || el;
+  return visitor && visitor(el, node) || el;
 }
 
 export function createComment(node: CommentNode) {
