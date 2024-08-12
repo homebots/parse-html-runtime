@@ -4,6 +4,8 @@ const validAttribute = /^[a-zA-Z_][a-zA-Z0-9\-_:.]*$/;
 
 export type Visitor = <T>(el: T, node: ParserNode) => T | null | undefined | void;
 
+let namespace = '';
+
 export function materialize(node: ParserNode, visitor: Visitor|null = null) {
   let el: any;
 
@@ -23,8 +25,16 @@ export function materialize(node: ParserNode, visitor: Visitor|null = null) {
       break;
 
     case 'element': {
+      if (node.tag === 'svg') {
+        namespace = 'http://www.w3.org/2000/svg'
+      }
+
       el = createElement(node);
       el.append(...node.children.map((n) => materialize(n, visitor)));
+
+      if (node.tag === 'svg') {
+        namespace = 'http://www.w3.org/2000/svg'
+      }
       break;
     }
 
@@ -44,16 +54,14 @@ export function createTextNode(node: TextNode) {
 }
 
 export function createElement(node: ElementNode) {
-  const el = document.createElement(node.tag);
-  el['@attributes'] = node.attributes;
-  el['@node'] = node;
+  const el = namespace ? document.createElementNS(namespace, node.tag) : document.createElement(node.tag);
 
   node.attributes.forEach((a: ParserAttribute) => setAttribute(el, a.name, a.value));
 
   return el;
 }
 
-export function setAttribute(el: HTMLElement, attribute: string, value: string | number | boolean) {
+export function setAttribute(el: Element, attribute: string, value: string | number | boolean) {
   if (!validAttribute.test(attribute)) {
     return;
   }
