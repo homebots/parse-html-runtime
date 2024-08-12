@@ -24,7 +24,7 @@ Convert a parsed tree back to HTML text
 ```ts
 import { serialize } from 'https://unpkg.com/@homebots/parse-html-runtime@latest/index.js'
 
-const html = normalize(nodes);
+const html = serialize(nodes);
 ```
 
 **materialize(nodes)**
